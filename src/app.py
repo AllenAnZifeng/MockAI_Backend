@@ -28,7 +28,16 @@ CORS(app)
 def hello_world():
     return 'Hello World!'
 
-
+@app.get('/verify/<roomID>')
+def verify_roomID(roomID):
+    interviews = Interview.query.all()
+    ids= set()
+    for interview in interviews:
+        ids.add(interview.interview_id)
+    if int(roomID) in ids:
+        return jsonify(Response(True, 'Room ID is valid').to_dict())
+    else:
+        return jsonify(Response(False, 'Room ID is invalid').to_dict())
 @app.get('/interviews')
 def get_interviews():
     interviews = Interview.query.all()
