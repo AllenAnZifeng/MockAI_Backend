@@ -1,3 +1,11 @@
-import os
-port = os.getenv('PORT', 'default_port')
-print("The port set is:", port)
+from enum import Enum
+
+
+class Sender(Enum):
+    APPLICANT = 'Applicant'
+    INTERVIEWER = 'Interviewer'
+    AI = 'AI'
+
+s = Sender.APPLICANT
+print(s)
+print((type(Sender.APPLICANT)))
