@@ -10,7 +10,7 @@ from src.database import db
 from flask_cors import CORS
 from datetime import datetime
 
-from src.utility import get_ai_feedback, domain
+from src.utility import get_ai_feedback, frontend_domain
 
 
 def create_app():
@@ -76,7 +76,7 @@ def get_feedback(roomID):
 
 def get_draw_board_data(roomID): # internal function
     driver = webdriver.Chrome()
-    driver.get(f'http://{domain}:3000/internal/{roomID}')
+    driver.get(f'http://{frontend_domain}:3000/internal/{roomID}')
     WebDriverWait(driver, 5).until(page_has_loaded)
 
     result = driver.execute_script("""

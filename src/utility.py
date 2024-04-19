@@ -3,10 +3,10 @@ from typing import List
 
 import requests
 
-with open('src/secret.txt') as f:
+with open('secret.txt') as f:
     api_key = f.read().strip()
 
-domain = 'localhost'
+frontend_domain = 'mockai.zifengallen.top'
 
 def get_ai_feedback(images: List[str],previous_feedback:str):
     content = [{
