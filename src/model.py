@@ -4,6 +4,28 @@ from enum import Enum
 from .database import db
 
 
+class Screenshot(db.Model):
+    screenshot_id = db.Column(db.Integer, primary_key=True)
+    interview_id = db.Column(db.Integer, db.ForeignKey('interview.interview_id'), nullable=False)
+    image = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    def __init__(self, interview_id, image):
+        self.interview_id = interview_id
+        self.image = image
+
+    def __repr__(self):
+        return f'<Screenshot {self.screenshot_id}: {self.interview_id} on {self.timestamp}>'
+
+    def to_dict(self):
+        return {
+            'screenshotID': self.screenshot_id,
+            'interviewID': self.interview_id,
+            'image': self.image,
+            'timestamp': self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+
 class Interview(db.Model):
     interview_id = db.Column(db.Integer, primary_key=True)
     candidate_name = db.Column(db.String(100), nullable=False)
@@ -28,9 +50,6 @@ class Interview(db.Model):
             'date': self.date.strftime("%Y-%m-%d %H:%M:%S"),
             'comments': self.comments
         }
-
-
-
 
 
 class Chat(db.Model):

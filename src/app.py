@@ -1,8 +1,16 @@
+import base64
+
 from flask import Flask, request, jsonify
-from src.model import Interview, Response, Chat
+
+from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait
+
+from src.model import Interview, Response, Chat, Screenshot
 from src.database import db
 from flask_cors import CORS
 from datetime import datetime
+
+from src.utility import get_ai_feedback, domain
 
 
 def create_app():
@@ -19,12 +27,86 @@ def create_app():
 
 
 app = create_app()
-# CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}}, methods=['GET', 'POST', 'OPTIONS'], allow_headers=["Content-Type", "Authorization", "X-Requested-With"])
 CORS(app)
+
 
 @app.route('/')
 def hello_world():
     return 'Hello World!'
+
+
+def page_has_loaded(driver):
+    return driver.execute_script(
+        "return typeof window.exportToBlob !== 'undefined' && window.exportToBlob !== null && window.editor !== null;")
+
+
+@app.get('/feedback/<roomID>')
+def get_feedback(roomID):
+    response = get_draw_board_data(roomID)
+    if not response[0]:
+        return jsonify(Response(False, 'Error or unexpected result').to_dict())
+    else:
+        image_base64_for_api = response[1]
+        # print(image_base64_for_api)
+        # add image data to db
+        img = Screenshot(int(roomID), image_base64_for_api)
+        db.session.add(img)
+        db.session.commit()
+
+        # get all images for the roomID sort by timestamp
+        screenshots = Screenshot.query.filter_by(interview_id=int(roomID)).order_by(Screenshot.timestamp).all()
+
+        # get previous feedback from AI
+        previous_chats = Chat.query.filter_by(interview_id=int(roomID), sender='AI').order_by(Chat.timestamp).all()
+        previous_feedback = '\n'.join([chat.message for chat in previous_chats])
+        obj = get_ai_feedback([img.image for img in screenshots], previous_feedback)
+
+        feedback = obj['choices'][0]['message']['content']
+
+        # add feedback to chat
+        new_chat = Chat(
+            interview_id=int(roomID),
+            sender='AI',
+            message=feedback
+        )
+        db.session.add(new_chat)
+        db.session.commit()
+
+        return jsonify(Response(True, feedback).to_dict())
+
+def get_draw_board_data(roomID): # internal function
+    driver = webdriver.Chrome()
+    driver.get(f'http://{domain}:3000/internal/{roomID}')
+    WebDriverWait(driver, 5).until(page_has_loaded)
+
+    result = driver.execute_script("""
+             return ( async () => {
+                try {
+                    const blob = await window.exportToBlob();
+                    return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+            });
+                } catch (error) {
+                    return { error: error.message };
+                }
+            })();
+            """)
+
+    if isinstance(result, str) and result.startswith("data:image/png;base64,"):
+        base64_encoded = result.split(',', 1)[1]
+        image_data = base64.b64decode(base64_encoded)
+        image_base64_for_api = base64.b64encode(image_data).decode('utf-8')
+
+        driver.quit()
+
+        return True, image_base64_for_api
+    else:
+        driver.quit()
+        return False, 'Error or unexpected result'
+
 
 @app.get('/verify/<roomID>')
 def verify_roomID(roomID):
@@ -33,6 +115,8 @@ def verify_roomID(roomID):
         return jsonify(Response(True, 'Room ID is valid').to_dict())
     else:
         return jsonify(Response(False, 'Room ID is invalid').to_dict())
+
+
 @app.get('/interviews')
 def get_interviews():
     interviews = Interview.query.all()
@@ -48,6 +132,8 @@ def get_chats(roomID):
     # print(chats)
     chats_list = [chat.to_dict() for chat in chats]
     return jsonify(Response(True, chats_list).to_dict())
+
+
 @app.post('/chats')
 def send_chats():
     if request.is_json:
@@ -56,7 +142,6 @@ def send_chats():
         interview_id = data['roomID']
         sender = data['sender']
         message = data['message']
-
 
         new_chat = Chat(
             interview_id=interview_id,
@@ -70,6 +155,7 @@ def send_chats():
 
     else:
         return jsonify(Response(False, 'Invalid Request. Not JSON').to_dict())
+
 
 @app.post('/interviews')
 def send_interviews():
@@ -95,12 +181,19 @@ def send_interviews():
         )
         db.session.add(new_interview)
         db.session.commit()
+        print(new_interview.interview_id)
+        new_chat = Chat(
+            interview_id=new_interview.interview_id,
+            sender='Admin',
+            message='Design a parking lot system. Draw the design diagrams on the whiteboard. The AI system will judge and provide you with further guidance.'
+        )
+        db.session.add(new_chat)
+        db.session.commit()
         print('added', new_interview)
         return jsonify(Response(True, 'Interview added successfully').to_dict())
 
     else:
         return jsonify(Response(False, 'Invalid Request. Not JSON').to_dict())
-
 
 
 if __name__ == '__main__':
