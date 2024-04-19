@@ -107,12 +107,13 @@ def get_draw_board_data(roomID): # internal function
         base64_encoded = result.split(',', 1)[1]
         image_data = base64.b64decode(base64_encoded)
         image_base64_for_api = base64.b64encode(image_data).decode('utf-8')
-
+        print('got image',len(image_base64_for_api))
         driver.quit()
 
         return True, image_base64_for_api
     else:
         driver.quit()
+        print('did not get image')
         return False, 'Error or unexpected result'
 
 
