@@ -81,7 +81,7 @@ def get_draw_board_data(roomID): # internal function
     # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
 
-
+    print('page loaded')
 
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(f'http://{frontend_domain}:3000/internal/{roomID}')
