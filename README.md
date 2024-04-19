@@ -15,3 +15,7 @@ $env:YPERSISTENCE ='./data'
 npx y-websocket
 ```
 
+set env variables (Vercel)
+```bash
+OPENAI_API_KEY = 'your-openai-api-key'
+```
