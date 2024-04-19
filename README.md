@@ -6,8 +6,8 @@ npm i y-websocket
 ```
 
 ```bash
-$env:PORT = 8888 
-$env:HOST = 'localhost' 
+$env:PORT=8888 
+$env:HOST='localhost' 
 $env:YPERSISTENCE ='./data'
 ```
 

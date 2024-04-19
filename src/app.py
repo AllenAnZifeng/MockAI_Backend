@@ -75,7 +75,9 @@ def get_feedback(roomID):
         return jsonify(Response(True, feedback).to_dict())
 
 def get_draw_board_data(roomID): # internal function
-    driver = webdriver.Chrome()
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--no-sandbox')
+    driver = webdriver.Chrome(options=chrome_options)
     driver.get(f'http://{frontend_domain}:3000/internal/{roomID}')
     WebDriverWait(driver, 5).until(page_has_loaded)
 
@@ -197,4 +199,4 @@ def send_interviews():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=16000,debug=False)
+    app.run(host='0.0.0.0',port=16000,debug=True)
