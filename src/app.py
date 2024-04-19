@@ -5,12 +5,12 @@ from flask import Flask, request, jsonify
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 
-from .model import Interview, Response, Chat, Screenshot
-from .database import db
+from src.model import Interview, Response, Chat, Screenshot
+from src.database import db
 from flask_cors import CORS
 from datetime import datetime
 
-from .utility import get_ai_feedback, frontend_domain
+from src.utility import get_ai_feedback, frontend_domain
 
 
 def create_app():
