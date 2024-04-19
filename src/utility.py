@@ -3,10 +3,10 @@ from typing import List
 
 import requests
 
-# with open('secret.txt') as f:
-#     api_key = f.read().strip()
+with open('secret.txt') as f:
+    api_key = f.read().strip()
 
-api_key = os.getenv('OPENAI_API_KEY')
+# api_key = os.getenv('OPENAI_API_KEY')
 
 frontend_domain = 'mockai.zifengallen.top'
 
