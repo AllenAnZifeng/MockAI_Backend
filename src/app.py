@@ -3,7 +3,9 @@ import base64
 from flask import Flask, request, jsonify
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.wait import WebDriverWait
+from webdriver_manager.chrome import ChromeDriverManager
 
 from src.model import Interview, Response, Chat, Screenshot
 from src.database import db
@@ -75,14 +77,20 @@ def get_feedback(roomID):
 
         return jsonify(Response(True, feedback).to_dict())
 
+
+
+
+
 def get_draw_board_data(roomID): # internal function
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
     # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--disable-dev-shm-usage')
 
     print('1')
-    driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+
     print('2')
     driver.get(f'http://{frontend_domain}:3000/internal/{roomID}')
     print('3')
