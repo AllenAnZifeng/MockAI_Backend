@@ -81,11 +81,14 @@ def get_draw_board_data(roomID): # internal function
     # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
 
-    print('page loaded')
-
+    print('1')
     driver = webdriver.Chrome(options=chrome_options)
+    print('2')
     driver.get(f'http://{frontend_domain}:3000/internal/{roomID}')
+    print('3')
     WebDriverWait(driver, 5).until(page_has_loaded)
+    print('4')
+
 
     result = driver.execute_script("""
              return ( async () => {
