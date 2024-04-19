@@ -87,6 +87,7 @@ def get_draw_board_data(roomID): # internal function
     # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument("--window-size=1024,768")
 
     print('1')
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
