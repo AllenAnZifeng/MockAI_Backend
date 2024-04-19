@@ -19,3 +19,7 @@ set env variables (Vercel)
 ```bash
 OPENAI_API_KEY = 'your-openai-api-key'
 ```
+Ngrok
+```bash
+ngrok http --domain=alert-cheetah-true.ngrok-free.app 5000
+```
