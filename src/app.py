@@ -90,7 +90,7 @@ def get_draw_board_data(roomID): # internal function
     chrome_options.add_argument("--window-size=1024,768")
 
     print('1')
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
 
     print('2')
     driver.get(f'http://{frontend_domain}:3000/internal/{roomID}')
