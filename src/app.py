@@ -82,7 +82,7 @@ def get_feedback(roomID):
 
 
 def get_draw_board_data(roomID): # internal function
-    chrome_options = webdriver.ChromeOptions()
+    # chrome_options = webdriver.ChromeOptions()
     # chrome_options.add_argument('--no-sandbox')
     # chrome_options.add_argument('--headless')
     # chrome_options.add_argument('--disable-gpu')
@@ -90,10 +90,10 @@ def get_draw_board_data(roomID): # internal function
     # chrome_options.add_argument("--window-size=1024,768")
 
     print('1')
-    driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome()
 
     print('2')
-    driver.get(f'http://{frontend_domain}:3000/internal/{roomID}')
+    driver.get(f'{frontend_domain}/internal/{roomID}')
     print('3')
     WebDriverWait(driver, 5).until(page_has_loaded)
     print('4')

@@ -7,7 +7,7 @@ with open('secret.txt') as f:
 
 # api_key = os.getenv('OPENAI_API_KEY')
 
-frontend_domain = 'mockai.zifengallen.top'
+frontend_domain = 'https://mockai.zifengallen.top'
 
 def get_ai_feedback(images: List[str],previous_feedback:str):
     content = [{
