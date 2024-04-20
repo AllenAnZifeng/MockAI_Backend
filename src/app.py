@@ -61,7 +61,7 @@ def get_feedback(roomID):
 
         # get previous feedback from AI
         previous_chats = Chat.query.filter_by(interview_id=int(roomID), sender='AI').order_by(Chat.timestamp).all()
-        previous_feedback = '\n'.join([chat.message for chat in previous_chats])
+        previous_feedback = '\n'.join([chat.message for chat in previous_chats][-20:])  # only keep the last 20 feedbacks
         obj = get_ai_feedback([img.image for img in screenshots], previous_feedback)
 
         feedback = obj['choices'][0]['message']['content']
@@ -82,16 +82,15 @@ def get_feedback(roomID):
 
 
 def get_draw_board_data(roomID): # internal function
-    # chrome_options = webdriver.ChromeOptions()
+    chrome_options = webdriver.ChromeOptions()
     # chrome_options.add_argument('--no-sandbox')
-    # chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--headless')
     # chrome_options.add_argument('--disable-gpu')
     # chrome_options.add_argument('--disable-dev-shm-usage')
     # chrome_options.add_argument("--window-size=1024,768")
 
     print('1')
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-
+    driver = webdriver.Chrome(options=chrome_options)
     print('2')
     driver.get(f'{frontend_domain}/internal/{roomID}')
     print('3')

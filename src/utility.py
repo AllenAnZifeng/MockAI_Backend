@@ -17,7 +17,7 @@ def get_ai_feedback(images: List[str],previous_feedback:str):
                 "Here are the previous feedbacks." + previous_feedback
     }]
 
-    for image in images:
+    for image in images[-20:]: # only keep the last 20 images
         content.append({
             "type": "image_url",
             "image_url": {
