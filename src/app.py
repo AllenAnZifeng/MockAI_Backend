@@ -84,6 +84,7 @@ def get_feedback(roomID):
 def get_draw_board_data(roomID): # internal function
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--remote-debugging-pipe')
     # chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
     # chrome_options.add_argument('--disable-dev-shm-usage')
